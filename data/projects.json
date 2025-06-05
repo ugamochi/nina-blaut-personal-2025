@@ -1,0 +1,38 @@
+{
+  "projects": [
+    {
+      "id": "project-1",
+      "number": "01",
+      "title": "Project Title 1",
+      "description": "Short project description",
+      "richDescription": "<p>Detailed project description with <strong>rich text</strong> formatting.</p>",
+      "images": [
+        {
+          "url": "images/projects/project1/image1.jpg",
+          "alt": "Project 1 Image 1"
+        },
+        {
+          "url": "images/projects/project1/image2.jpg",
+          "alt": "Project 1 Image 2"
+        }
+      ]
+    },
+    {
+      "id": "project-2",
+      "number": "02",
+      "title": "Project Title 2",
+      "description": "Short project description",
+      "richDescription": "<p>Detailed project description with <strong>rich text</strong> formatting.</p>",
+      "images": [
+        {
+          "url": "images/projects/project2/image1.jpg",
+          "alt": "Project 2 Image 1"
+        },
+        {
+          "url": "images/projects/project2/image2.jpg",
+          "alt": "Project 2 Image 2"
+        }
+      ]
+    }
+  ]
+} 

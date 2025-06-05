@@ -1,0 +1,120 @@
+/* Animation classes */
+.animate-in {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Initial states */
+.top-nav {
+  opacity: 0;
+  transform: translateY(50vh);
+}
+
+.page-wrapper {
+  opacity: 0;
+}
+
+.proj-nav {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.bio-text,
+.bio-img {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.public {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* Animation keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Project menu styles */
+.hack4-filter-button {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.3s ease;
+}
+
+.hack4-filter-button:hover {
+  opacity: 0.7;
+}
+
+.hack4-filter-button.hack4-active {
+  font-weight: bold;
+}
+
+/* Project section styles */
+.hack4-cms-anchor-section {
+  scroll-margin-top: 100px;
+}
+
+/* Swiper styles */
+.swiper {
+  width: 100%;
+  overflow: visible;
+}
+
+.swiper-slide {
+  height: auto;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: #000;
+  background: rgba(255, 255, 255, 0.8);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 18px;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 991px) {
+  .swiper-slide {
+    width: 100% !important;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .bio-group {
+    flex-direction: column;
+  }
+  
+  .bio-pic {
+    margin-top: 2rem;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 32px;
+    height: 32px;
+  }
+
+  .swiper-button-next:after,
+  .swiper-button-prev:after {
+    font-size: 14px;
+  }
+} 
