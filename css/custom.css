@@ -15,8 +15,8 @@
 }
 
 html, body {
-  /* Pure viewport width scaling - linear proportional scaling */
-  font-size: 2.2vw;
+  /* Desktop viewport scaling - linear proportional scaling */
+  font-size: 1.2vw;
   color: #303030;
   background: #f7f4ef;
   font-family: Satoshi Medium, sans-serif;
@@ -365,8 +365,10 @@ section {
     padding-right: 1.25em;
   }
   
-  /* Typography inherits from body's vw-based scaling */
-  /* No font-size override needed - let body's vw scaling work */
+  /* Mobile viewport scaling - larger vw for better mobile experience */
+  html, body {
+    font-size: 4.2vw;
+  }
   
   /* Navigation */
   .nav-bar {
