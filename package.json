@@ -1,0 +1,25 @@
+{
+  "name": "nina-blaut-9844ff8e6f2b51947c04f66948cf.webflow",
+  "version": "1.0.0",
+  "description": "A modern portfolio website for Nina Blaut, showcasing her work in interior design and space revitalization.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ugamochi/nina-blaut-personal-2025.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ugamochi/nina-blaut-personal-2025/issues"
+  },
+  "homepage": "https://github.com/ugamochi/nina-blaut-personal-2025#readme",
+  "dependencies": {
+    "@notionhq/client": "^3.1.3",
+    "dotenv": "^16.5.0"
+  }
+}

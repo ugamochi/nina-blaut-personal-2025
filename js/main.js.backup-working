@@ -98,46 +98,17 @@ function initSliders() {
     if (nextBtn) nextBtn.classList.add(`swiper-button-next-${idx}`);
     if (prevBtn) prevBtn.classList.add(`swiper-button-prev-${idx}`);
 
-    // Count actual slides
-    const slideCount = slider.querySelectorAll('.swiper-slide').length;
-    
-    // Determine if we should use loop mode
-    // Only enable loop if we have more than 3 slides (conservative approach)
-    const shouldLoop = slideCount > 3;
-    
-    console.log(`Swiper ${idx}: ${slideCount} slides, loop: ${shouldLoop}`);
-
-    const swiperConfig = {
-      slidesPerView: 'auto',
-      slidesPerGroup: 1,
-      spaceBetween: 20,
-      speed: 600,
+    new Swiper(slider, {
+      slidesPerView: 1,
+      spaceBetween: 30,
+      loop: false,
+      speed: 800,
       grabCursor: true,
-      centeredSlides: false,
-      slideToClickedSlide: true,
-      watchSlidesProgress: true,
       navigation: {
         nextEl: `.swiper-button-next-${idx}`,
         prevEl: `.swiper-button-prev-${idx}`,
-      },
-      breakpoints: {
-        768: {
-          spaceBetween: 30,
-        }
       }
-    };
-
-    // Add loop configuration only if we have enough slides
-    if (shouldLoop) {
-      swiperConfig.loop = true;
-      swiperConfig.loopAdditionalSlides = 2; // Conservative fixed value
-      swiperConfig.loopFillGroupWithBlank = false;
-    } else {
-      // For galleries with few slides, use rewind instead of loop
-      swiperConfig.rewind = true;
-    }
-
-    new Swiper(slider, swiperConfig);
+    });
   });
 }
 
