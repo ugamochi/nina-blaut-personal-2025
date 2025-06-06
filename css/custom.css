@@ -15,8 +15,8 @@
 }
 
 html, body {
-  /* Proportional scaling with viewport width for perfect scaling */
-  font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+  /* Pure viewport width scaling - linear proportional scaling */
+  font-size: 2.2vw;
   color: #303030;
   background: #f7f4ef;
   font-family: Satoshi Medium, sans-serif;
