@@ -385,10 +385,18 @@ section {
     gap: 1.25em;
     margin-top: 1.25em;
     margin-bottom: 1em;
+    text-align: center;
+  }
+  .left-selected-projects {
+    margin-bottom: 0.75em;
   }
   .anchor-data-feed {
     flex-wrap: wrap;
     gap: 1.5em;
+    justify-content: center;
+  }
+  .collection-item {
+    flex-shrink: 1;
   }
   
   /* Project Sections */
@@ -439,15 +447,22 @@ section {
   /* Footer */
   .footer-wrapper {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 1.25em;
     padding: 1.25em 0;
+    text-align: center;
   }
   .public {
-    gap: 2em;
+    flex-direction: column;
+    gap: 1.5em;
+    align-items: center;
+  }
+  .public-link {
+    justify-content: center;
   }
   .website-by-ugamochi {
-    margin-top: 0.5em;
+    margin-top: 1em;
+    text-align: center;
   }
 }
 
