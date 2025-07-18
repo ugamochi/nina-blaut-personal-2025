@@ -31,7 +31,6 @@ img {
   vertical-align: middle;
   display: inline-block;
   border: 0;
-  border-radius: 0.25em;
 }
 
 /* 2. Typography */
@@ -42,11 +41,6 @@ h1, h2, h3, h4, h5, h6, .proj-heading {
   line-height: var(--line-height-tight);
   margin-top: 0;
   margin-bottom: 1.25em;
-}
-
-/* Bio heading override */
-.hi {
-  font-size: var(--font-size-base);
 }
 body, .proj-descrip, p, .bio-text {
   font-size: var(--font-size-base);
@@ -87,9 +81,9 @@ section {
 .proj-nav-group {
   display: flex;
   flex-direction: row;
-  gap: 1em;
+  gap: 1.875em;
   margin-top: 1.875em;
-  margin-bottom: 1.875em;
+  margin-bottom: 1.25em;
   box-sizing: border-box;
 }
 .proj-nav {
@@ -111,8 +105,8 @@ section {
 .anchor-data-feed {
   display: flex;
   flex-wrap: nowrap;
-  align-items: center;
-  gap: 1em;
+  align-items: baseline;
+  gap: 2em;
 }
 .collection-item {
   display: flex;
@@ -163,7 +157,7 @@ section {
   opacity: 0.7;
 }
 .hack4-filter-button.hack4-active {
-  font-weight: normal;
+  font-weight: bold;
 }
 .hack4-cms-anchor-section {
   scroll-margin-top: 6.25em;
@@ -207,7 +201,6 @@ section {
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
-  border-radius: 0.25em;
 }
 .swiper-slide {
   width: auto !important;
@@ -232,7 +225,6 @@ section {
   height: 100%;
   width: auto;
   object-fit: contain;
-  border-radius: 0.25em;
   display: block;
   max-width: none;
   max-height: 100%;
@@ -382,30 +374,24 @@ section {
     height: 3em;
   }
   .top-nav-text {
-    font-size: var(--font-size-base);
+    font-size: 0.5em;
     letter-spacing: 0.1em;
   }
   
   /* Projects Menu */
   .proj-nav-group {
     flex-direction: column;
-    gap: 1em;
+    gap: 1.25em;
     margin-top: 1.25em;
-    margin-bottom: 1.25em;
+    margin-bottom: 1em;
     text-align: left;
   }
   .left-selected-projects {
-    margin-bottom: 0;
-  }
-  .projects-list {
-    gap: 1.25em;
-  }
-  .hack4-filter-button.w-inline-block {
-    font-size: var(--font-size-base);
+    margin-bottom: 0.75em;
   }
   .anchor-data-feed {
     flex-wrap: wrap;
-    gap: 1em;
+    gap: 1.5em;
     justify-content: flex-start;
   }
   .collection-item {
@@ -452,7 +438,6 @@ section {
   .bio-text {
     height: auto;
     min-height: auto;
-    font-size: var(--font-size-base);
   }
   .bio-pic {
     margin-top: 0;
@@ -467,23 +452,17 @@ section {
     text-align: center;
   }
   .public {
-    flex-direction: row;
-    gap: 1em;
+    flex-direction: column;
+    gap: 1.5em;
     align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
   }
   .public-link {
     justify-content: center;
-    font-size: var(--font-size-base);
-  }
-  .footer-text {
-    font-size: var(--font-size-base);
   }
   .website-by-ugamochi {
-    margin-top: 0;
+    margin-top: 1em;
     text-align: center;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     opacity: 0.8;
     padding: 0.5em 0;
   }
@@ -506,27 +485,6 @@ section {
   /* Project sections stay horizontal */
   .hack4-cms-anchor-section {
     flex-direction: row;
-  }
-  
-  /* Footer desktop layout */
-  .footer-wrapper {
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 1.875em 0;
-  }
-  
-  .public {
-    gap: 1em;
-  }
-  
-  .footer-text {
-    font-size: var(--font-size-lg);
-  }
-  
-  .website-by-ugamochi {
-    margin-top: 0;
-    font-size: var(--font-size-xs);
-    opacity: 0.6;
   }
 }
 
@@ -614,16 +572,19 @@ section {
 
 .footer-wrapper {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   gap: 1.25em;
+  padding: 1.875em 0;
 }
 
 .public {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 3.75em;
   flex-wrap: wrap;
-  gap: 1em;
 }
 
 .public-link {
@@ -639,6 +600,7 @@ section {
 }
 
 .footer-text {
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-medium);
   margin: 0;
   line-height: var(--line-height-tight);
@@ -659,7 +621,9 @@ section {
 }
 
 .website-by-ugamochi {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-base);
+  opacity: 0.6;
+  margin-top: 0;
   white-space: nowrap;
 }
 
