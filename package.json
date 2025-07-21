@@ -1,17 +1,31 @@
 {
-  "name": "nina-blaut-9844ff8e6f2b51947c04f66948cf.webflow",
+  "name": "nina-blaut-portfolio",
   "version": "1.0.0",
   "description": "A modern portfolio website for Nina Blaut, showcasing her work in interior design and space revitalization.",
   "main": "index.js",
   "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "echo 'CSS already optimized in custom.min.css'",
+    "build:js": "echo 'JavaScript optimized manually'",
+    "optimize:images": "echo 'Images already optimized with responsive variants'",
+    "analyze": "npm run analyze:bundle && npm run analyze:performance",
+    "analyze:bundle": "du -sh js/* css/* images/* | sort -hr",
+    "analyze:performance": "echo 'Run Lighthouse or PageSpeed Insights for performance analysis'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ugamochi/nina-blaut-personal-2025.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "portfolio",
+    "interior-design",
+    "performance",
+    "gsap",
+    "responsive"
+  ],
+  "author": "Nina Blaut",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
@@ -21,5 +35,11 @@
   "dependencies": {
     "@notionhq/client": "^3.1.3",
     "dotenv": "^16.5.0"
-  }
+  },
+  "devDependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

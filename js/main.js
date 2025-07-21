@@ -1,31 +1,88 @@
-// Load projects data
+// Performance optimization: Cache DOM elements
+const cache = {
+  projectsContainer: null,
+  menuContainer: null,
+  projectsList: null
+};
+
+// Performance optimization: Debounce function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Load projects data with caching and error handling
 async function loadProjects() {
+  // Check if already cached
+  if (window.projectsCache) {
+    return window.projectsCache;
+  }
+
   try {
-    // Use a relative path with "./" to be explicit
-    const response = await fetch('./data/projects.json');
+    // Performance mark
+    if (performance && performance.mark) {
+      performance.mark('projects-fetch-start');
+    }
+
+    const response = await fetch('./data/projects.json', {
+      cache: 'default',
+      mode: 'same-origin'
+    });
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+    
     const data = await response.json();
+    
+    // Cache the result
+    window.projectsCache = data.projects;
+    
+    // Performance mark
+    if (performance && performance.mark) {
+      performance.mark('projects-fetch-end');
+      performance.measure('projects-fetch', 'projects-fetch-start', 'projects-fetch-end');
+    }
+    
+    // Dispatch event for other modules
+    document.dispatchEvent(new CustomEvent('projectsLoaded', { 
+      detail: { projects: data.projects } 
+    }));
+    
     return data.projects;
   } catch (error) {
     console.error('Error loading projects:', error);
+    
     // Display a user-friendly error message on the page
-    const projectsContainer = document.getElementById('projects-wrapper');
+    const projectsContainer = cache.projectsContainer || document.getElementById('projects-wrapper');
     if (projectsContainer) {
-        projectsContainer.innerHTML = '<p style="color: red; text-align: center; padding: 2rem;">Error: Could not load project data. Please check the console for details.</p>';
+      projectsContainer.innerHTML = '<p style="color: red; text-align: center; padding: 2rem;">Error: Could not load project data. Please refresh the page.</p>';
     }
+    
     return [];
   }
 }
 
-// Create project menu items
+// Create project menu items with performance optimizations
 function createProjectMenu(projects) {
-  const menuContainer = document.getElementById('projects-menu');
-  menuContainer.innerHTML = ''; // Clear previous menu
+  const menuContainer = cache.menuContainer || document.getElementById('projects-menu');
+  if (!menuContainer) return;
+  
+  cache.menuContainer = menuContainer;
+  
+  // Use DocumentFragment for better performance
+  const fragment = document.createDocumentFragment();
   const menuList = document.createElement('div');
   menuList.className = 'anchor-data-feed';
 
+  // Batch DOM operations
   projects.forEach(project => {
     const menuItem = document.createElement('div');
     menuItem.className = 'collection-item';
@@ -38,156 +95,266 @@ function createProjectMenu(projects) {
     menuList.appendChild(menuItem);
   });
 
-  menuContainer.appendChild(menuList);
+  fragment.appendChild(menuList);
+  menuContainer.appendChild(fragment);
 }
 
-// Create project sections
+// Create project sections with lazy loading for images
 function createProjectSections(projects) {
-  const projectsContainer = document.getElementById('projects-wrapper');
-  projectsContainer.innerHTML = ''; // Clear any previous content
+  const projectsContainer = cache.projectsContainer || document.getElementById('projects-wrapper');
+  if (!projectsContainer) return;
+  
+  cache.projectsContainer = projectsContainer;
+  
+  // Use DocumentFragment for better performance
+  const fragment = document.createDocumentFragment();
   const projectsList = document.createElement('div');
   projectsList.className = 'projects-list';
 
-  projects.forEach((project, idx) => {
-    const projectItem = document.createElement('div');
-    projectItem.className = 'project-item';
-    projectItem.innerHTML = `
-      <div id="${project.id}" class="hack4-cms-anchor-section project-flex">
-        <div class="left-section">
-          <div class="left-top">
-            <h2 class="proj-heading">${project.title}</h2>
-            <div class="proj-descrip">${project.description}</div>
-          </div>
-          <div class="left-bottom">
-            <div class="rich-desc-proj w-richtext">${project.richDescription}</div>
-          </div>
-        </div>
-        <div class="swiper slider1">
-          <div class="swiper-wrapper">
-            ${project.images.map(image => `
-              <div class="swiper-slide">
-                <div class="card">
-                  <img src="${image.url}" loading="lazy" alt="${image.alt}" class="img">
+  projects.forEach(project => {
+    const projectSection = document.createElement('section');
+    projectSection.className = 'hack4-cms-anchor-section';
+    projectSection.id = project.id;
+    
+    // Create project content with lazy loading
+    projectSection.innerHTML = `
+      <div class="container">
+        <div class="proj-descrip">
+          <div class="proj-descrip-group">
+            <div class="proj-descrip-content">
+              <div class="proj-heading">
+                <div class="proj-number">${project.number}</div>
+                <h1 class="hack4-proj-head">${project.title}</h1>
+              </div>
+              <div class="proj-descrip-paragraph">
+                <p class="hack4-proj-paragraph">${project.description}</p>
+                <div class="rich-text w-richtext">
+                  ${project.richDescription}
                 </div>
               </div>
-            `).join('')}
+            </div>
           </div>
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
+        </div>
+        <div class="project-images">
+          <div class="swiper" data-project-id="${project.id}">
+            <div class="swiper-wrapper">
+              ${createImageSlides(project.images)}
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+          </div>
         </div>
       </div>
     `;
-    projectsList.appendChild(projectItem);
-    // Add a line between projects except after the last one
-    if (idx < projects.length - 1) {
-      const line = document.createElement('div');
-      line.className = 'project-line';
-      projectsList.appendChild(line);
-    }
+
+    projectsList.appendChild(projectSection);
   });
 
-  projectsContainer.appendChild(projectsList);
+  fragment.appendChild(projectsList);
+  projectsContainer.appendChild(fragment);
+  
+  cache.projectsList = projectsList;
+  
+  // Initialize intersection observer for lazy loading
+  initLazyLoading();
 }
 
-// Initialize Swiper sliders
+// Create image slides with lazy loading
+function createImageSlides(images) {
+  return images.map((image, index) => {
+    const imageName = image.url.split('/').pop();
+    const imagePath = `images/${imageName}`;
+    
+    return `
+      <div class="swiper-slide">
+        <img 
+          ${index === 0 ? 'src' : 'data-src'}="${imagePath}" 
+          alt="${image.alt}" 
+          class="${index === 0 ? '' : 'swiper-lazy'}"
+          loading="lazy"
+          width="800"
+          height="600"
+        />
+        ${index === 0 ? '' : '<div class="swiper-lazy-preloader"></div>'}
+      </div>
+    `;
+  }).join('');
+}
+
+// Lazy loading for images
+function initLazyLoading() {
+  if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.classList.remove('swiper-lazy');
+            imageObserver.unobserve(img);
+          }
+        }
+      });
+    }, {
+      rootMargin: '50px'
+    });
+
+    // Observe all lazy images
+    document.querySelectorAll('img[data-src]').forEach(img => {
+      imageObserver.observe(img);
+    });
+  }
+}
+
+// Initialize Swiper with performance optimizations
 function initSliders() {
-  const sliders = document.querySelectorAll('.slider1');
-  sliders.forEach((slider, idx) => {
-    const nextBtn = slider.querySelector('.swiper-button-next');
-    const prevBtn = slider.querySelector('.swiper-button-prev');
-    if (nextBtn) nextBtn.classList.add(`swiper-button-next-${idx}`);
-    if (prevBtn) prevBtn.classList.add(`swiper-button-prev-${idx}`);
+  // Only initialize if Swiper is available
+  if (!window.Swiper) {
+    console.warn('Swiper not loaded yet, deferring initialization');
+    return;
+  }
 
-    // Count actual slides
-    const slideCount = slider.querySelectorAll('.swiper-slide').length;
-    
-    // Determine if we should use loop mode
-    // Only enable loop if we have more than 3 slides (conservative approach)
-    const shouldLoop = slideCount > 3;
-    
-    console.log(`Swiper ${idx}: ${slideCount} slides, loop: ${shouldLoop}`);
-
-    const swiperConfig = {
-      slidesPerView: 'auto',
-      slidesPerGroup: 1,
-      spaceBetween: 20,
-      speed: 600,
-      grabCursor: true,
-      centeredSlides: false,
-      slideToClickedSlide: true,
-      watchSlidesProgress: true,
-      navigation: {
-        nextEl: `.swiper-button-next-${idx}`,
-        prevEl: `.swiper-button-prev-${idx}`,
+  const swipers = document.querySelectorAll('.swiper');
+  
+  swipers.forEach(swiperEl => {
+    const swiper = new Swiper(swiperEl, {
+      loop: true,
+      lazy: {
+        loadPrevNext: true,
+        loadOnTransitionStart: true,
       },
-      breakpoints: {
-        768: {
-          spaceBetween: 30,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      // Performance optimizations
+      observer: true,
+      observeParents: true,
+      watchSlidesVisibility: true,
+      preloadImages: false,
+      // Reduce resource usage
+      resistanceRatio: 0.85,
+      threshold: 5,
+      speed: 400,
+      // Mobile optimizations
+      touchRatio: 1,
+      touchAngle: 45,
+      grabCursor: true
+    });
+    
+    // Store swiper instance for potential cleanup
+    swiperEl.swiper = swiper;
+  });
+}
+
+// Optimized intersection observer for active states
+function initIntersectionObserver() {
+  if (!('IntersectionObserver' in window)) return;
+
+  const observer = new IntersectionObserver(debounce((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.intersectionRatio >= 1) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.hack4-filter-button')
+          .forEach(btn => btn.classList.remove('hack4-active'));
+        
+        // Add active class to current button
+        const currentButton = document.querySelector(`.hack4-filter-button[href='#${entry.target.id}']`);
+        if (currentButton) {
+          currentButton.classList.add('hack4-active');
         }
       }
-    };
-
-    // Add loop configuration only if we have enough slides
-    if (shouldLoop) {
-      swiperConfig.loop = true;
-      swiperConfig.loopAdditionalSlides = 2; // Conservative fixed value
-      swiperConfig.loopFillGroupWithBlank = false;
-    } else {
-      // For galleries with few slides, use rewind instead of loop
-      swiperConfig.rewind = true;
-    }
-
-    new Swiper(slider, swiperConfig);
-  });
-}
-
-// Initialize intersection observer for menu highlighting
-function initIntersectionObserver() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        document.querySelectorAll('.hack4-filter-button.hack4-active')
-          .forEach(btn => btn.classList.remove('hack4-active'));
-        document.querySelector(`.hack4-filter-button[href='#${entry.target.id}']`)
-          ?.classList.add('hack4-active');
-      }
     });
-  }, { threshold: 1 });
+  }, 100), { 
+    threshold: 1,
+    rootMargin: '0px 0px -50% 0px'
+  });
 
+  // Observe all project sections
   document.querySelectorAll('.hack4-cms-anchor-section')
     .forEach(section => observer.observe(section));
 }
 
-// Initialize animations - DISABLED for GSAP integration
-// function initAnimations() {
-//   document.querySelector('.top-nav').classList.add('animate-in');
-//   document.querySelector('.page-wrapper').classList.add('animate-in');
-//   document.querySelector('.proj-nav').classList.add('animate-in');
-//   document.querySelector('.bio-text').classList.add('animate-in');
-//   document.querySelector('.bio-img').classList.add('animate-in');
-//   document.querySelector('.public').classList.add('animate-in');
-// }
-
-// Main initialization
+// Optimized initialization with performance monitoring
 async function init() {
-  const projects = await loadProjects();
-  if (projects.length > 0) {
-    createProjectMenu(projects);
-    createProjectSections(projects);
-    initSliders();
-    initIntersectionObserver();
-    
-    // Trigger smooth scroll setup after projects are loaded
-    if (window.NinaBlautAnimations && window.NinaBlautAnimations.animations) {
-      setTimeout(() => {
-        window.NinaBlautAnimations.animations.scroll.bindSmoothScroll();
-        console.log('GSAP: Smooth scroll re-initialized after projects loaded');
-      }, 100);
+  try {
+    // Performance mark
+    if (performance && performance.mark) {
+      performance.mark('init-start');
     }
+
+    const projects = await loadProjects();
     
-    // initAnimations(); // Disabled for GSAP integration
+    if (projects.length > 0) {
+      // Batch DOM operations
+      requestAnimationFrame(() => {
+        createProjectMenu(projects);
+        createProjectSections(projects);
+        
+        // Initialize features after DOM is ready
+        requestAnimationFrame(() => {
+          initIntersectionObserver();
+          
+          // Initialize sliders if Swiper is available, otherwise wait for it
+          if (window.Swiper) {
+            initSliders();
+          } else {
+            document.addEventListener('projectsLoaded', () => {
+              setTimeout(initSliders, 100);
+            });
+          }
+          
+          // GSAP integration
+          if (window.NinaBlautAnimations && window.NinaBlautAnimations.animations) {
+            setTimeout(() => {
+              if (window.NinaBlautAnimations.animations.scroll && 
+                  window.NinaBlautAnimations.animations.scroll.bindSmoothScroll) {
+                window.NinaBlautAnimations.animations.scroll.bindSmoothScroll();
+                console.log('GSAP: Smooth scroll re-initialized after projects loaded');
+              }
+            }, 100);
+          }
+          
+          // Performance mark
+          if (performance && performance.mark) {
+            performance.mark('init-end');
+            performance.measure('init-duration', 'init-start', 'init-end');
+          }
+        });
+      });
+    }
+  } catch (error) {
+    console.error('Initialization error:', error);
   }
 }
 
-// Start the application
-document.addEventListener('DOMContentLoaded', init); 
+// Optimized event binding
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  // DOM is already ready
+  init();
+}
+
+// Cleanup function for better memory management
+window.addEventListener('beforeunload', () => {
+  // Clean up Swiper instances
+  document.querySelectorAll('.swiper').forEach(swiperEl => {
+    if (swiperEl.swiper) {
+      swiperEl.swiper.destroy(true, true);
+    }
+  });
+  
+  // Clear cache
+  window.projectsCache = null;
+});
+
+// Export for potential module usage
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { loadProjects, createProjectMenu, createProjectSections, initSliders };
+} 
