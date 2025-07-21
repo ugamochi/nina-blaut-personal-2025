@@ -463,7 +463,7 @@ section {
   /* Footer */
   .footer-wrapper {
     flex-direction: column;
-    align-items: left;
+    align-items: flex-start;
     gap: 1.25em;
     padding: 1.25em 0;
     text-align: left;
@@ -471,12 +471,12 @@ section {
   .public {
     flex-direction: row;
     gap: 1em;
-    align-items: left;
+    align-items: flex-start;
     flex-wrap: wrap;
-    justify-content: left;
+    justify-content: flex-start;
   }
   .public-link {
-    justify-content: left;
+    justify-content: flex-start;
     font-size: var(--font-size-base);
   }
   .footer-text {
